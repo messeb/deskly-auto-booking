@@ -56,7 +56,7 @@ def book(token, user_id, seat_uuid, booking_date):
     booking_response_data = booking_response.json()
 
     # Handle response
-    if booking_response.status_code == 200:
+    if booking_response.status_code == 201:
         print("Booking successful:", booking_response_data)
     elif booking_response.status_code == 400:
         error_type = booking_response_data.get('type')
