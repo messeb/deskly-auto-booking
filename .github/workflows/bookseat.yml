@@ -2,8 +2,8 @@ name: Book desk.ly seat
 
 on:
   schedule:
-    # Runs at 9:00 AM UTC every weekday (Monday to Friday)
-    - cron: '0 9 * * 1-5'
+    # Runs at 7:00 AM UTC every weekday (Monday to Friday)
+    - cron: '0 7 * * 1-5'
   workflow_dispatch:
 
 jobs:

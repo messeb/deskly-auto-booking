@@ -58,7 +58,7 @@ The seat number is a version 4 UUID that can be found by inspecting the network 
 
 ### GitHub Actions Workflow
 
-This project includes a GitHub Actions workflow that runs every weekday at 9:00 AM UTC. The workflow is defined in `.github/workflows/bookseat.yml`.
+This project includes a GitHub Actions workflow that runs every weekday at 7:00 AM UTC. The workflow is defined in `.github/workflows/bookseat.yml`.
 
 The workflow performs the following steps:
 
