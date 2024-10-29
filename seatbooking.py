@@ -11,11 +11,21 @@ API_HOST = 'https://app.desk.ly/de/api'
 LOGIN_ENDPOINT = f'{API_HOST}/authorize/accessToken'
 BOOKING_ENDPOINT = f'{API_HOST}/booking'
 
+# Define global variables for booking times on a working day
+BOOKING_FROM_TIME = "08:00:00"
+BOOKING_UNTIL_TIME = "18:00:00"
+
 def load_env():
     username = os.getenv('USERNAME')
     password = os.getenv('PASSWORD')
     seat_uuid = os.getenv('SEAT_UUID')
     days_until_booking = int(os.getenv('DAYS_UNTIL_BOOKING', 0))
+
+    # Check if any environment variable is not set
+    if not all([username, password, seat_uuid, days_until_booking]):
+        raise ValueError("One or more environment variables are not set")
+
+    days_until_booking = int(days_until_booking)
     return username, password, seat_uuid, days_until_booking
 
 def login(username, password):
@@ -38,8 +48,8 @@ def login(username, password):
 def book(token, user_id, seat_uuid, booking_date):
     # Form data payload
     form_data = {
-        "booking[seatDayBookings][0][from]": "08:00:00",
-        "booking[seatDayBookings][0][until]": "18:00:00",
+        "booking[seatDayBookings][0][from]": BOOKING_FROM_TIME,
+        "booking[seatDayBookings][0][until]": BOOKING_UNTIL_TIME,
         "booking[seatDayBookings][0][date]": booking_date,
         "booking[seatDayBookings][0][seat]": seat_uuid,
         "booking[email]": "false",
@@ -80,5 +90,8 @@ def book_seat(username, password, seat_uuid, days_until_booking):
     print(booking_response_data)
 
 if __name__ == "__main__":
-    username, password, seat_uuid, days_until_booking = load_env()
-    book_seat(username, password, seat_uuid, days_until_booking)
+    try:
+        username, password, seat_uuid, days_until_booking = load_env()
+        book_seat(username, password, seat_uuid, days_until_booking)
+    except ValueError as e:
+        print(f"Error: {e}")
