@@ -1,3 +1,17 @@
+"""
+Deskly Auto Booking Script
+
+This script automates the process of booking seats using the desk.ly API. It logs in with provided credentials,
+calculates the booking date based on the number of days from the current date, and attempts to book a seat.
+It includes error handling for common booking issues and supports scheduled execution using GitHub Actions.
+
+Environment Variables:
+    USERNAME (str): Deskly username.
+    PASSWORD (str): Deskly password.
+    SEAT_UUID (str): UUID of the seat to book.
+    DAYS_UNTIL_BOOKING (int): Number of days from today until the booking date.
+"""
+
 import os
 import requests
 from dotenv import load_dotenv
@@ -16,10 +30,19 @@ BOOKING_FROM_TIME = "08:00:00"
 BOOKING_UNTIL_TIME = "18:00:00"
 
 def load_env():
+    """
+    Load environment variables and validate them.
+
+    Returns:
+        tuple: A tuple containing username, password, seat_uuid, and days_until_booking.
+
+    Raises:
+        ValueError: If one or more environment variables are not set.
+    """
     username = os.getenv('USERNAME')
     password = os.getenv('PASSWORD')
     seat_uuid = os.getenv('SEAT_UUID')
-    days_until_booking = int(os.getenv('DAYS_UNTIL_BOOKING', 0))
+    days_until_booking = os.getenv('DAYS_UNTIL_BOOKING')
 
     # Check if any environment variable is not set
     if not all([username, password, seat_uuid, days_until_booking]):
@@ -29,6 +52,16 @@ def load_env():
     return username, password, seat_uuid, days_until_booking
 
 def login(username, password):
+    """
+    Perform login to desk.ly API and retrieve token and user id.
+
+    Args:
+        username (str): desk.ly username.
+        password (str): desk.ly password.
+
+    Returns:
+        tuple: A tuple containing the token and user id.
+    """
     # Login payload
     login_payload = {
         'username': username,
@@ -46,7 +79,19 @@ def login(username, password):
     return token, user_id
 
 def book(token, user_id, seat_uuid, booking_date):
-    # Form data payload
+    """
+    Perform the booking request to Deskly API.
+
+    Args:
+        token (str): Authorization token.
+        user_id (str): User ID.
+        seat_uuid (str): UUID of the seat to book.
+        booking_date (str): Date of the booking in YYYY-MM-DD format.
+
+    Returns:
+        dict: The response data from the booking request.
+    """
+    # Booking seat form data payload
     form_data = {
         "booking[seatDayBookings][0][from]": BOOKING_FROM_TIME,
         "booking[seatDayBookings][0][until]": BOOKING_UNTIL_TIME,
@@ -56,7 +101,7 @@ def book(token, user_id, seat_uuid, booking_date):
         "booking[bookedFor]": user_id
     }
 
-    # Headers with token
+    # Auth header with token
     headers = {
         'Authorization': f'Bearer {token}'
     }
@@ -84,6 +129,15 @@ def book(token, user_id, seat_uuid, booking_date):
     return booking_response_data
 
 def book_seat(username, password, seat_uuid, days_until_booking):
+    """
+    Book a seat using the Deskly API.
+
+    Args:
+        username (str): Deskly username.
+        password (str): Deskly password.
+        seat_uuid (str): UUID of the seat to book.
+        days_until_booking (int): Number of days from today until the booking date.
+    """
     token, user_id = login(username, password)
     booking_date = (datetime.now() + timedelta(days=days_until_booking)).strftime('%Y-%m-%d')
     booking_response_data = book(token, user_id, seat_uuid, booking_date)
