@@ -2,12 +2,15 @@
 
 This project automates the booking of seats using the desk.ly API. It logs in with provided credentials, calculates the booking date based on the number of days from the current date, and attempts to book a seat.
 
+The seat number is a version 4 UUID that can be found by inspecting the network requests when booking a seat on the desk.ly website. It's the form value of `booking[seatDayBookings][0][seat]`.
+
 ## Features
 
 - Automated seat booking
 - Configurable booking date
 - Error handling for common booking issues
 - Scheduled execution using GitHub Actions
+
 
 ## Setup
 
@@ -22,7 +25,7 @@ This project automates the booking of seats using the desk.ly API. It logs in wi
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/deskly-auto-booking.git
+    git clone https://github.com/messeb/deskly-auto-booking.git
     cd deskly-auto-booking
     ```
 
