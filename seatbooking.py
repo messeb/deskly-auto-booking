@@ -93,12 +93,12 @@ def book(token, user_id, seat_uuid, booking_date):
     """
     # Booking seat form data payload
     form_data = {
-        "booking[seatDayBookings][0][from]": BOOKING_FROM_TIME,
-        "booking[seatDayBookings][0][until]": BOOKING_UNTIL_TIME,
-        "booking[seatDayBookings][0][date]": booking_date,
-        "booking[seatDayBookings][0][seat]": seat_uuid,
-        "booking[email]": "false",
-        "booking[bookedFor]": user_id
+        'booking[seatDayBookings][0][from]': (None, BOOKING_FROM_TIME),
+        'booking[seatDayBookings][0][until]': (None, BOOKING_UNTIL_TIME),
+        'booking[seatDayBookings][0][date]': (None, booking_date),
+        'booking[seatDayBookings][0][seat]': (None, seat_uuid),
+        'booking[email]': (None, 'false'),
+        'booking[bookedFor]': (None, user_id),
     }
 
     # Auth header with token
@@ -107,7 +107,7 @@ def book(token, user_id, seat_uuid, booking_date):
     }
 
     # Perform booking request
-    booking_response = requests.post(BOOKING_ENDPOINT, data=form_data, headers=headers)
+    booking_response = requests.post(BOOKING_ENDPOINT, files=form_data, headers=headers)
     booking_response_data = booking_response.json()
 
     # Handle response
