@@ -128,6 +128,18 @@ def book(token, user_id, seat_uuid, booking_date):
 
     return booking_response_data
 
+def is_weekday(date):
+    """
+    Check if the given date is a weekday (Monday to Friday).
+
+    Args:
+        date (datetime): The date to check.
+
+    Returns:
+        bool: True if the date is a weekday, False otherwise.
+    """
+    return date.weekday() < 5  # 0-4 are Monday to Friday
+
 def book_seat(username, password, seat_uuid, days_until_booking):
     """
     Book a seat using the Deskly API.
@@ -139,8 +151,15 @@ def book_seat(username, password, seat_uuid, days_until_booking):
         days_until_booking (int): Number of days from today until the booking date.
     """
     token, user_id = login(username, password)
-    booking_date = (datetime.now() + timedelta(days=days_until_booking)).strftime('%Y-%m-%d')
-    booking_response_data = book(token, user_id, seat_uuid, booking_date)
+    booking_date = datetime.now() + timedelta(days=days_until_booking)
+    
+    # Check if the booking date is a weekday
+    if not is_weekday(booking_date):
+        print(f"Error: Cannot book on {booking_date.strftime('%Y-%m-%d')} as it's not a weekday")
+        return
+        
+    booking_date_str = booking_date.strftime('%Y-%m-%d')
+    booking_response_data = book(token, user_id, seat_uuid, booking_date_str)
     print(booking_response_data)
 
 if __name__ == "__main__":
